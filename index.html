@@ -14,12 +14,31 @@
             background-color: #f0f0f0;
         }
         canvas {
-            border: 1px solid #ccc;
+        }
+        .fruit {
+            animation: pop 0.4s ease-out;
+        }
+        @keyframes pop {
+            0% {
+                transform: scale(0.6);
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
+    
+    <!-- Add audio element for sound effect -->
+    <audio id="popSound">
+        <source src="puho.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -93,6 +112,19 @@
                 let y = Math.random() * (canvas.height - fruitSize); // Random y position
                 fruits.push(new Fruit(x, y, fruitType));
             }
+
+            // Add 'fruit' class to trigger CSS animation
+            const canvasContainer = document.getElementById('gameCanvas').parentElement;
+            canvasContainer.classList.remove('fruit');
+            void canvasContainer.offsetWidth; // Trigger reflow to restart animation
+            canvasContainer.classList.add('fruit');
+        }
+
+        // Function to play pop sound
+        function playPopSound() {
+            const popSound = document.getElementById('popSound');
+            popSound.currentTime = 0; // Rewind to the beginning
+            popSound.play();
         }
 
         // Function to draw fruits on canvas
@@ -116,6 +148,7 @@
             for (let i = fruits.length - 1; i >= 0; i--) {
                 if (fruits[i].isPointInside(mouseX, mouseY)) {
                     fruits.splice(i, 1); // Remove the frontmost fruit from array
+                    playPopSound(); // Play pop sound
                     break; // Exit loop after removing
                 }
             }
