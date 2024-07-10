@@ -59,6 +59,15 @@
         const grapeImg = new Image();
         grapeImg.src = 'grape.png';
 
+        const bananaImg = new Image();
+        bananaImg.src = 'banana.png';
+
+        const melonImg = new Image();
+        melonImg.src = 'melon.png';
+
+        const orangeImg = new Image();
+        orangeImg.src = 'orange.png';
+
         // Calculate fruit size based on screen area
         let fruitSize = Math.sqrt((canvas.width * canvas.height) / 10);
 
@@ -72,8 +81,38 @@
                 this.x = x;
                 this.y = y;
                 this.type = type;
-                this.width = fruitSize;
-                this.height = fruitSize;
+                this.width = fruitSize; // Width determined by calculated size
+                this.height = fruitSize; // Height determined by calculated size
+
+                // Ensure images load before setting dimensions
+                this.img = new Image();
+                switch (this.type) {
+                    case 'apple':
+                        this.img = appleImg;
+                        break;
+                    case 'grape':
+                        this.img = grapeImg;
+                        break;
+                    case 'banana':
+                        this.img = bananaImg;
+                        break;
+                    case 'melon':
+                        this.img = melonImg;
+                        break;
+                    case 'orange':
+                        this.img = orangeImg;
+                        break;
+                    default:
+                        break;
+                }
+
+                // Load image and set dimensions after loaded
+                this.img.onload = () => {
+                    const aspectRatio = this.img.width / this.img.height;
+                    this.width = fruitSize * aspectRatio;
+                    this.height = fruitSize;
+                };
+
                 this.speedX = Math.random() * 2 - 1; // Random initial speed (-1 to 1)
                 this.speedY = Math.random() * 2 - 1;
             }
@@ -100,11 +139,7 @@
 
             // Method to draw the fruit on canvas
             draw() {
-                if (this.type === 'apple') {
-                    ctx.drawImage(appleImg, this.x, this.y, this.width, this.height);
-                } else if (this.type === 'grape') {
-                    ctx.drawImage(grapeImg, this.x, this.y, this.width, this.height);
-                }
+                ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
             }
         }
 
@@ -169,12 +204,29 @@
 
             // If all fruits are tapped, switch to next fruit type
             if (fruits.length === 0) {
-                if (currentFruit === 'apple') {
-                    currentFruit = 'grape';
-                    generateFruits('grape');
-                } else if (currentFruit === 'grape') {
-                    currentFruit = 'apple';
-                    generateFruits('apple');
+                switch (currentFruit) {
+                    case 'apple':
+                        currentFruit = 'grape';
+                        generateFruits('grape');
+                        break;
+                    case 'grape':
+                        currentFruit = 'banana';
+                        generateFruits('banana');
+                        break;
+                    case 'banana':
+                        currentFruit = 'melon';
+                        generateFruits('melon');
+                        break;
+                    case 'melon':
+                        currentFruit = 'orange';
+                        generateFruits('orange');
+                        break;
+                    case 'orange':
+                        currentFruit = 'apple';
+                        generateFruits('apple');
+                        break;
+                    default:
+                        break;
                 }
             }
 
