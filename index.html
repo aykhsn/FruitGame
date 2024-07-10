@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Tapping Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to match the device's screen size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Load images
+        const appleImg = new Image();
+        appleImg.src = 'apple.png';
+
+        const grapeImg = new Image();
+        grapeImg.src = 'grape.png';
+
+        // Calculate fruit size based on screen area
+        const fruitSize = Math.sqrt((canvas.width * canvas.height) / 20);
+
+        // Game variables
+        let fruits = [];
+        let currentFruit = 'apple'; // Initial fruit type
+
+        // Fruit class
+        class Fruit {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.width = fruitSize;
+                this.height = fruitSize;
+                this.speedX = Math.random() * 2 - 1; // Random initial speed (-1 to 1)
+                this.speedY = Math.random() * 2 - 1;
+            }
+
+            // Method to update fruit position
+            updatePosition() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Bounce off the canvas edges
+                if (this.x <= 0 || this.x + this.width >= canvas.width) {
+                    this.speedX *= -1; // Reverse horizontal direction
+                }
+                if (this.y <= 0 || this.y + this.height >= canvas.height) {
+                    this.speedY *= -1; // Reverse vertical direction
+                }
+            }
+
+            // Method to check if point is inside the fruit
+            isPointInside(x, y) {
+                return (x >= this.x && x <= this.x + this.width &&
+                        y >= this.y && y <= this.y + this.height);
+            }
+
+            // Method to draw the fruit on canvas
+            draw() {
+                if (this.type === 'apple') {
+                    ctx.drawImage(appleImg, this.x, this.y, this.width, this.height);
+                } else if (this.type === 'grape') {
+                    ctx.drawImage(grapeImg, this.x, this.y, this.width, this.height);
+                }
+            }
+        }
+
+        // Function to generate fruits
+        function generateFruits(fruitType) {
+            fruits = [];
+            for (let i = 0; i < 5; i++) {
+                let x = Math.random() * (canvas.width - fruitSize); // Random x position
+                let y = Math.random() * (canvas.height - fruitSize); // Random y position
+                fruits.push(new Fruit(x, y, fruitType));
+            }
+        }
+
+        // Function to draw fruits on canvas
+        function drawFruits() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            // Draw fruits from front to back to ensure correct layering
+            fruits.forEach(fruit => {
+                fruit.updatePosition(); // Update fruit position
+                fruit.draw(); // Draw fruit on canvas
+            });
+        }
+
+        // Function to handle tap/click events
+        function handleTap(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            // Find the topmost fruit that is clicked (drawn last, thus frontmost)
+            for (let i = fruits.length - 1; i >= 0; i--) {
+                if (fruits[i].isPointInside(mouseX, mouseY)) {
+                    fruits.splice(i, 1); // Remove the frontmost fruit from array
+                    break; // Exit loop after removing
+                }
+            }
+
+            // If all fruits are tapped, switch to next fruit type
+            if (fruits.length === 0) {
+                if (currentFruit === 'apple') {
+                    currentFruit = 'grape';
+                    generateFruits('grape');
+                } else if (currentFruit === 'grape') {
+                    currentFruit = 'apple';
+                    generateFruits('apple');
+                }
+            }
+
+            // Redraw canvas
+            drawFruits();
+        }
+
+        // Event listener for tap/click
+        canvas.addEventListener('mousedown', handleTap);
+
+        // Initial setup: Start with apples
+        window.onload = function() {
+            generateFruits('apple');
+            setInterval(drawFruits, 20); // Update and draw fruits every 20 milliseconds
+        };
+
+        // Update canvas size and fruit size on window resize
+        window.onresize = function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            fruitSize = Math.sqrt((canvas.width * canvas.height) / 20);
+            drawFruits();
+        };
+    </script>
+</body>
+</html>
