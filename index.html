@@ -34,8 +34,12 @@
 <body>
     <canvas id="gameCanvas"></canvas>
     
-    <!-- Add audio element for sound effect -->
+    <!-- Add audio elements for sound effects -->
     <audio id="popSound">
+        <source src="pecho.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="appearSound">
         <source src="puho.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -56,7 +60,7 @@
         grapeImg.src = 'grape.png';
 
         // Calculate fruit size based on screen area
-        const fruitSize = Math.sqrt((canvas.width * canvas.height) / 20);
+        let fruitSize = Math.sqrt((canvas.width * canvas.height) / 10);
 
         // Game variables
         let fruits = [];
@@ -104,6 +108,20 @@
             }
         }
 
+        // Function to play pop sound
+        function playPopSound() {
+            const popSound = document.getElementById('popSound');
+            popSound.currentTime = 0; // Rewind to the beginning
+            popSound.play();
+        }
+
+        // Function to play appear sound
+        function playAppearSound() {
+            const appearSound = document.getElementById('appearSound');
+            appearSound.currentTime = 0; // Rewind to the beginning
+            appearSound.play();
+        }
+
         // Function to generate fruits
         function generateFruits(fruitType) {
             fruits = [];
@@ -113,18 +131,14 @@
                 fruits.push(new Fruit(x, y, fruitType));
             }
 
+            // Play appear sound
+            playAppearSound();
+
             // Add 'fruit' class to trigger CSS animation
             const canvasContainer = document.getElementById('gameCanvas').parentElement;
             canvasContainer.classList.remove('fruit');
             void canvasContainer.offsetWidth; // Trigger reflow to restart animation
             canvasContainer.classList.add('fruit');
-        }
-
-        // Function to play pop sound
-        function playPopSound() {
-            const popSound = document.getElementById('popSound');
-            popSound.currentTime = 0; // Rewind to the beginning
-            popSound.play();
         }
 
         // Function to draw fruits on canvas
