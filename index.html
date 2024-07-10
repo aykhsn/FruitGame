@@ -260,6 +260,42 @@
             fruitSize = Math.sqrt((canvas.width * canvas.height) / 20);
             drawFruits();
         };
+
+        // AudioContext for better sound timing
+        const audio_ctx = new (window.AudioContext || window.webkitAudioContext)();
+        let audio_buffer = null;
+        let audio_buffer_node = null;
+
+        (async () => {
+          // Fetch the sound file (e.g., 'pecho.mp3') and get ArrayBuffer
+          const responsePop = await fetch('pecho.mp3');
+          const responseAppear = await fetch('puho.mp3');
+          const responsePopBuffer = await responsePop.arrayBuffer();
+          const responseAppearBuffer = await responseAppear.arrayBuffer();
+          
+          // Decode ArrayBuffer to AudioBuffer
+          const popSound = await audio_ctx.decodeAudioData(responsePopBuffer);
+          const appearSound = await audio_ctx.decodeAudioData(responseAppearBuffer);
+          
+          // Prepare the initial audio buffer node
+          prepareAudioBufferNode();
+          
+          // Add event listener for tap/click event on canvas
+          canvas.addEventListener('mousedown', () => {
+            // Play the audio
+            audio_buffer_node.start(0);
+            
+            // Prepare next audio buffer node for seamless playback
+            prepareAudioBufferNode();
+          });
+        })();
+
+        // Function to prepare AudioBufferNode for playback
+        function prepareAudioBufferNode() {
+          audio_buffer_node = audio_ctx.createBufferSource();
+          audio_buffer_node.buffer = audio_buffer;
+          audio_buffer_node.connect(audio_ctx.destination);
+        }
     </script>
 </body>
 </html>
