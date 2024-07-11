@@ -57,7 +57,7 @@
             this.load.image('melon', 'melon.png');
             this.load.image('orange', 'orange.png');
             this.load.audio('pop', 'pecho.mp3');
-            this.load.audio('appear', 'puho.mp3');
+            this.load.audio('appear', 'poincho.mp3');
         }
 
         function create() {
@@ -79,16 +79,24 @@
             for (let i = children.length - 1; i >= 0; i--) {
                 const fruit = children[i];
                 if (Phaser.Geom.Rectangle.Contains(fruit.getBounds(), pointer.x, pointer.y)) {
-                    fruit.destroy();
-                    this.popSound.play();
+                    this.tweens.add({
+                        targets: fruit,
+                        scaleX: 0,
+                        scaleY: 0,
+                        duration: 200,
+                        ease: 'Power2',
+                        onComplete: () => {
+                            fruit.destroy();
+                            this.popSound.play();
+                            if (fruits.countActive(true) === 0) {
+                                const nextIndex = (fruitTypes.indexOf(currentFruit) + 1) % fruitTypes.length;
+                                currentFruit = fruitTypes[nextIndex];
+                                generateFruits.call(this, currentFruit);
+                            }
+                        }
+                    });
                     break;
                 }
-            }
-
-            if (fruits.countActive(true) === 0) {
-                const nextIndex = (fruitTypes.indexOf(currentFruit) + 1) % fruitTypes.length;
-                currentFruit = fruitTypes[nextIndex];
-                generateFruits.call(this, currentFruit);
             }
         }
 
@@ -124,8 +132,17 @@
                 const fruitHeight = fruitWidth;
                 
                 fruit.setScale(fruitWidth / fruit.width, fruitHeight / fruit.height);
+                fruit.setScale(0);
 
                 // 果物のアニメーションを設定
+                this.tweens.add({
+                    targets: fruit,
+                    scaleX: fruitWidth / fruit.width,
+                    scaleY: fruitHeight / fruit.height,
+                    duration: 500,
+                    ease: 'Bounce.easeOut'
+                });
+
                 this.tweens.add({
                     targets: fruit,
                     duration: Phaser.Math.Between(4000, 6000), // アニメーションの期間
