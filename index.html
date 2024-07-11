@@ -18,285 +18,135 @@
             align-items: center;
             height: 100vh;
             background-color: #ffbcbc;
-            overflow: hidden; /* 画面スクロールを無効にする */
-        }
-        canvas {
-        }
-        .fruit {
-            animation: pop 0.4s ease-out;
-        }
-        @keyframes pop {
-            0% {
-                transform: scale(0.6);
-            }
-            70% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
+            overflow: hidden;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    
-    <!-- Add audio elements for sound effects -->
-    <audio id="popSound">
-        <source src="pecho.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <audio id="appearSound">
-        <source src="puho.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Set canvas size to match the device's screen size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Load images
-        const appleImg = new Image();
-        appleImg.src = 'apple.png';
-
-        const grapeImg = new Image();
-        grapeImg.src = 'grape.png';
-
-        const bananaImg = new Image();
-        bananaImg.src = 'banana.png';
-
-        const melonImg = new Image();
-        melonImg.src = 'melon.png';
-
-        const orangeImg = new Image();
-        orangeImg.src = 'orange.png';
-
-        // Calculate fruit size based on screen area
-        let fruitSize = Math.sqrt((canvas.width * canvas.height) / 8);
-
-        // Game variables
-        let fruits = [];
-        let currentFruit = 'apple'; // Initial fruit type
-
-        // Fruit class
-        class Fruit {
-            constructor(x, y, type) {
-                this.x = x;
-                this.y = y;
-                this.type = type;
-                this.width = fruitSize; // Width determined by calculated size
-                this.height = fruitSize; // Height determined by calculated size
-
-                // Ensure images load before setting dimensions
-                this.img = new Image();
-                switch (this.type) {
-                    case 'apple':
-                        this.img = appleImg;
-                        break;
-                    case 'grape':
-                        this.img = grapeImg;
-                        break;
-                    case 'banana':
-                        this.img = bananaImg;
-                        break;
-                    case 'melon':
-                        this.img = melonImg;
-                        break;
-                    case 'orange':
-                        this.img = orangeImg;
-                        break;
-                    default:
-                        break;
+        const config = {
+            type: Phaser.AUTO,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            backgroundColor: '#ffbcbc',
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            },
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 },
+                    debug: false
                 }
-
-                // Load image and set dimensions after loaded
-                this.img.onload = () => {
-                    const aspectRatio = this.img.width / this.img.height;
-                    this.width = fruitSize * aspectRatio;
-                    this.height = fruitSize;
-                };
-
-                this.speedX = Math.random() * 2 - 1; // Random initial speed (-1 to 1)
-                this.speedY = Math.random() * 2 - 1;
             }
+        };
 
-            // Method to update fruit position
-            updatePosition() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+        const game = new Phaser.Game(config);
 
-                // Bounce off the canvas edges
-                if (this.x <= 0 || this.x + this.width >= canvas.width) {
-                    this.speedX *= -1; // Reverse horizontal direction
-                }
-                if (this.y <= 0 || this.y + this.height >= canvas.height) {
-                    this.speedY *= -1; // Reverse vertical direction
+        let fruits;
+        let currentFruit = 'apple';
+        const fruitTypes = ['apple', 'grape', 'banana', 'melon', 'orange'];
+
+        function preload() {
+            this.load.image('apple', 'apple.png');
+            this.load.image('grape', 'grape.png');
+            this.load.image('banana', 'banana.png');
+            this.load.image('melon', 'melon.png');
+            this.load.image('orange', 'orange.png');
+            this.load.audio('pop', 'pecho.mp3');
+            this.load.audio('appear', 'puho.mp3');
+        }
+
+        function create() {
+            fruits = this.physics.add.group();
+            this.input.on('pointerdown', handleTap, this);
+
+            this.popSound = this.sound.add('pop');
+            this.appearSound = this.sound.add('appear');
+
+            generateFruits.call(this, currentFruit);
+        }
+
+        function update() {
+            // ここでは何もしない
+        }
+
+        function handleTap(pointer) {
+            const children = fruits.getChildren();
+            for (let i = children.length - 1; i >= 0; i--) {
+                const fruit = children[i];
+                if (Phaser.Geom.Rectangle.Contains(fruit.getBounds(), pointer.x, pointer.y)) {
+                    fruit.destroy();
+                    this.popSound.play();
+                    break;
                 }
             }
 
-            // Method to check if point is inside the fruit
-            isPointInside(x, y) {
-                return (x >= this.x && x <= this.x + this.width &&
-                        y >= this.y && y <= this.y + this.height);
-            }
-
-            // Method to draw the fruit on canvas
-            draw() {
-                ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            if (fruits.countActive(true) === 0) {
+                const nextIndex = (fruitTypes.indexOf(currentFruit) + 1) % fruitTypes.length;
+                currentFruit = fruitTypes[nextIndex];
+                generateFruits.call(this, currentFruit);
             }
         }
 
-        // Function to play pop sound
-        function playPopSound() {
-            const popSound = document.getElementById('popSound');
-            popSound.currentTime = 0; // Rewind to the beginning
-            popSound.play();
-        }
+        function generateFruits(type) {
+            fruits.clear(true, true);
 
-        // Function to play appear sound
-        function playAppearSound() {
-            const appearSound = document.getElementById('appearSound');
-            appearSound.currentTime = 0; // Rewind to the beginning
-            appearSound.play();
-        }
+            // 果物の速度
+            const fruitSpeedX = 0.2; // X軸方向の速度
+            const fruitSpeedY = 0.2; // Y軸方向の速度
 
-        // Function to generate fruits
-        function generateFruits(fruitType) {
-            fruits = [];
             for (let i = 0; i < 5; i++) {
-                let x = Math.random() * (canvas.width - fruitSize); // Random x position
-                let y = Math.random() * (canvas.height - fruitSize); // Random y position
-                fruits.push(new Fruit(x, y, fruitType));
-            }
+                let x = Phaser.Math.Between(100, game.config.width - 100);
+                let y = Phaser.Math.Between(100, game.config.height - 100);
 
-            // Play appear sound
-            playAppearSound();
-
-            // Add 'fruit' class to trigger CSS animation
-            const canvasContainer = document.getElementById('gameCanvas').parentElement;
-            canvasContainer.classList.remove('fruit');
-            void canvasContainer.offsetWidth; // Trigger reflow to restart animation
-            canvasContainer.classList.add('fruit');
-        }
-
-        // Function to draw fruits on canvas
-        function drawFruits() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-
-            // Draw fruits from front to back to ensure correct layering
-            fruits.forEach(fruit => {
-                fruit.updatePosition(); // Update fruit position
-                fruit.draw(); // Draw fruit on canvas
-            });
-        }
-
-        // Function to handle tap/click events
-        function handleTap(event) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-
-            // Find the topmost fruit that is clicked (drawn last, thus frontmost)
-            for (let i = fruits.length - 1; i >= 0; i--) {
-                if (fruits[i].isPointInside(mouseX, mouseY)) {
-                    fruits.splice(i, 1); // Remove the frontmost fruit from array
-                    playPopSound(); // Play pop sound
-                    break; // Exit loop after removing
+                // 画面端の100px以内に生成されないように制限
+                if (x < 100) {
+                    x += 100;
+                } else if (x > game.config.width - 100) {
+                    x -= 100;
                 }
-            }
-
-            // If all fruits are tapped, switch to next fruit type
-            if (fruits.length === 0) {
-                switch (currentFruit) {
-                    case 'apple':
-                        currentFruit = 'grape';
-                        generateFruits('grape');
-                        break;
-                    case 'grape':
-                        currentFruit = 'banana';
-                        generateFruits('banana');
-                        break;
-                    case 'banana':
-                        currentFruit = 'melon';
-                        generateFruits('melon');
-                        break;
-                    case 'melon':
-                        currentFruit = 'orange';
-                        generateFruits('orange');
-                        break;
-                    case 'orange':
-                        currentFruit = 'apple';
-                        generateFruits('apple');
-                        break;
-                    default:
-                        break;
+                if (y < 100) {
+                    y += 100;
+                } else if (y > game.config.height - 100) {
+                    y -= 100;
                 }
+
+                const fruit = fruits.create(x, y, type).setInteractive();
+
+                // 果物のサイズを画面の面積の10分の1に設定
+                const screenArea = game.config.width * game.config.height;
+                const fruitArea = screenArea / 10;
+                const fruitWidth = Math.sqrt(fruitArea);
+                const fruitHeight = fruitWidth;
+                
+                fruit.setScale(fruitWidth / fruit.width, fruitHeight / fruit.height);
+
+                // 果物のアニメーションを設定
+                this.tweens.add({
+                    targets: fruit,
+                    duration: Phaser.Math.Between(4000, 6000), // アニメーションの期間
+                    x: x + Phaser.Math.Between(-100, 100), // X方向の揺れ
+                    y: y + Phaser.Math.Between(-100, 100), // Y方向の揺れ
+                    yoyo: true, // アニメーションを繰り返す
+                    repeat: -1, // 無限に繰り返す
+                    ease: 'Sine.easeInOut', // ゆらゆらとした動き
+                });
+
+                // 果物の速度を設定
+                fruit.speedX = fruitSpeedX;
+                fruit.speedY = fruitSpeedY;
             }
 
-            // Redraw canvas
-            drawFruits();
+            this.appearSound.play();
         }
 
-        // Event listener for tap/click
-        canvas.addEventListener('mousedown', handleTap);
-
-        // Preload sounds and start the game
-        window.onload = function() {
-            const popSound = document.getElementById('popSound');
-            popSound.load(); // Preload pop sound
-            const appearSound = document.getElementById('appearSound');
-            appearSound.load(); // Preload appear sound
-            generateFruits('apple');
-            setInterval(drawFruits, 20); // Update and draw fruits every 20 milliseconds
-        };
-
-        // Update canvas size and fruit size on window resize
         window.onresize = function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            fruitSize = Math.sqrt((canvas.width * canvas.height) / 20);
-            drawFruits();
+            game.scale.resize(window.innerWidth, window.innerHeight);
         };
-
-        // AudioContext for better sound timing
-        const audio_ctx = new (window.AudioContext || window.webkitAudioContext)();
-        let audio_buffer = null;
-        let audio_buffer_node = null;
-
-        (async () => {
-          // Fetch the sound file (e.g., 'pecho.mp3') and get ArrayBuffer
-          const responsePop = await fetch('pecho.mp3');
-          const responseAppear = await fetch('puho.mp3');
-          const responsePopBuffer = await responsePop.arrayBuffer();
-          const responseAppearBuffer = await responseAppear.arrayBuffer();
-          
-          // Decode ArrayBuffer to AudioBuffer
-          const popSound = await audio_ctx.decodeAudioData(responsePopBuffer);
-          const appearSound = await audio_ctx.decodeAudioData(responseAppearBuffer);
-          
-          // Prepare the initial audio buffer node
-          prepareAudioBufferNode();
-          
-          // Add event listener for tap/click event on canvas
-          canvas.addEventListener('mousedown', () => {
-            // Play the audio
-            audio_buffer_node.start(0);
-            
-            // Prepare next audio buffer node for seamless playback
-            prepareAudioBufferNode();
-          });
-        })();
-
-        // Function to prepare AudioBufferNode for playback
-        function prepareAudioBufferNode() {
-          audio_buffer_node = audio_ctx.createBufferSource();
-          audio_buffer_node.buffer = audio_buffer;
-          audio_buffer_node.connect(audio_ctx.destination);
-        }
     </script>
 </body>
 </html>
