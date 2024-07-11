@@ -17,7 +17,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffbcbc;
             overflow: hidden;
         }
     </style>
@@ -29,7 +28,6 @@
             type: Phaser.AUTO,
             width: window.innerWidth,
             height: window.innerHeight,
-            backgroundColor: '#ffbcbc',
             scene: {
                 preload: preload,
                 create: create,
@@ -67,11 +65,12 @@
             this.popSound = this.sound.add('pop');
             this.appearSound = this.sound.add('appear');
 
+            // 最初の果物を生成
             generateFruits.call(this, currentFruit);
         }
 
         function update() {
-            // ここでは何もしない
+            // 何もしない
         }
 
         function handleTap(pointer) {
@@ -103,15 +102,37 @@
         function generateFruits(type) {
             fruits.clear(true, true);
 
-            // 果物の速度
-            const fruitSpeedX = 0.2; // X軸方向の速度
-            const fruitSpeedY = 0.2; // Y軸方向の速度
+            // 果物ごとの背景色を設定
+            switch (type) {
+                case 'apple':
+                    this.cameras.main.setBackgroundColor('#ffbcbc');
+                    break;
+                case 'grape':
+                    this.cameras.main.setBackgroundColor('#c8ffd8');
+                    break;
+                case 'banana':
+                    this.cameras.main.setBackgroundColor('#fff4b3');
+                    break;
+                case 'melon':
+                    this.cameras.main.setBackgroundColor('#ffd1dc');
+                    break;
+                case 'orange':
+                    this.cameras.main.setBackgroundColor('#ffe6b3');
+                    break;
+                default:
+                    this.cameras.main.setBackgroundColor('#ffbcbc');
+                    break;
+            }
+
+            // 果物を生成するループ
+            const fruitSpeedX = 0.2;
+            const fruitSpeedY = 0.2;
 
             for (let i = 0; i < 5; i++) {
                 let x = Phaser.Math.Between(100, game.config.width - 100);
                 let y = Phaser.Math.Between(100, game.config.height - 100);
 
-                // 画面端の100px以内に生成されないように制限
+                // 果物が画面端に生成されないようにする
                 if (x < 100) {
                     x += 100;
                 } else if (x > game.config.width - 100) {
@@ -145,15 +166,14 @@
 
                 this.tweens.add({
                     targets: fruit,
-                    duration: Phaser.Math.Between(4000, 6000), // アニメーションの期間
-                    x: x + Phaser.Math.Between(-100, 100), // X方向の揺れ
-                    y: y + Phaser.Math.Between(-100, 100), // Y方向の揺れ
-                    yoyo: true, // アニメーションを繰り返す
-                    repeat: -1, // 無限に繰り返す
-                    ease: 'Sine.easeInOut', // ゆらゆらとした動き
+                    duration: Phaser.Math.Between(4000, 6000),
+                    x: x + Phaser.Math.Between(-100, 100),
+                    y: y + Phaser.Math.Between(-100, 100),
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut',
                 });
 
-                // 果物の速度を設定
                 fruit.speedX = fruitSpeedX;
                 fruit.speedY = fruitSpeedY;
             }
