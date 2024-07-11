@@ -45,6 +45,7 @@
         const game = new Phaser.Game(config);
 
         let fruits;
+        let isFirst = true;
         let currentFruit = 'apple';
         const fruitTypes = ['apple', 'grape', 'banana', 'melon', 'orange'];
 
@@ -63,10 +64,12 @@
             this.input.on('pointerdown', handleTap, this);
 
             this.popSound = this.sound.add('pop');
-            this.appearSound = this.sound.add('appear');
+            // this.appearSound = this.sound.add('appear');
 
             // 最初の果物を生成
             generateFruits.call(this, currentFruit);
+
+            this.appearSound = this.sound.add('appear');
         }
 
         function update() {
@@ -184,7 +187,12 @@
                 fruit.speedY = fruitSpeedY;
             }
 
-            this.appearSound.play();
+            if(isFirst) {
+                isFirst = false;
+                return;
+            }
+
+            this.appearSound.play();            
         }
 
         window.onresize = function() {
