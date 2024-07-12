@@ -64,7 +64,7 @@
         let currentFruit = 'apple';
         const fruitTypes = ['apple', 'grape', 'banana', 'melon', 'orange'];
 
-        const fruitSize = Math.min(game.config.width, game.config.height) / 3; // 果物のサイズを画面の幅または高さの1/5に設定
+        const fruitSize = Math.min(game.config.width, game.config.height) / 3; // 果物のサイズを画面の幅または高さの1/3に設定
 
         function preload() {
             this.load.svg('apple', 'apple.svg', { width: fruitSize, height: fruitSize });
@@ -149,18 +149,14 @@
                     break;
             }
 
-            // 果物を生成するループ
-
             for (let i = 0; i < 5; i++) {
                 let x = Phaser.Math.Between(fruitSize, game.config.width - fruitSize);
                 let y = Phaser.Math.Between(fruitSize, game.config.height - fruitSize);
 
                 const fruit = fruits.create(x, y, type).setInteractive();
 
-                // 果物のサイズを設定
-                fruit.setDisplaySize(fruitSize, fruitSize);
+                fruit.setScale(0); // 初期スケールを0に設定
 
-                // 果物のアニメーションを設定
                 this.tweens.add({
                     targets: fruit,
                     scaleX: 1,
@@ -180,12 +176,12 @@
                 });
             }
 
-            if(isFirst) {
+            if (isFirst) {
                 isFirst = false;
                 return;
             }
 
-            this.appearSound.play();            
+            this.appearSound.play();
         }
 
         window.onresize = function() {
