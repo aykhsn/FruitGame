@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fruit Game</title>
-    <link rel="icon" href="apple.png">
-    <link rel="apple-touch-icon" href="apple.png">
-    <link rel="apple-touch-icon-precomposed" href="apple.png">
+    <link rel="icon" href="apple.svg">
+    <link rel="apple-touch-icon" href="apple.svg">
+    <link rel="apple-touch-icon-precomposed" href="apple.svg">
     <meta name="description" content="フルーツをタップしよう！子供向けゲーム">
     <meta name="keywords" content="game, ゲーム, フルーツゲーム、知育、子供向けゲーム">
     <style>
@@ -20,9 +20,17 @@
             background-color: #add8e6; /* ライトピンクの背景色 */
             overflow: hidden;
         }
+        #game-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
+    <div id="game-container"></div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
         const config = {
@@ -30,6 +38,7 @@
             width: window.innerWidth,
             height: window.innerHeight,
             backgroundColor: '#add8e6', // 水色の背景色を設定
+            parent: 'game-container',
             scene: {
                 preload: preload,
                 create: create,
@@ -41,6 +50,10 @@
                     gravity: { y: 0 },
                     debug: false
                 }
+            },
+            scale: {
+                mode: Phaser.Scale.RESIZE,
+                autoCenter: Phaser.Scale.CENTER_BOTH
             }
         };
 
@@ -51,12 +64,14 @@
         let currentFruit = 'apple';
         const fruitTypes = ['apple', 'grape', 'banana', 'melon', 'orange'];
 
+        const fruitSize = Math.min(game.config.width, game.config.height) / 3; // 果物のサイズを画面の幅または高さの1/5に設定
+
         function preload() {
-            this.load.image('apple', 'apple.png');
-            this.load.image('grape', 'grape.png');
-            this.load.image('banana', 'banana.png');
-            this.load.image('melon', 'melon.png');
-            this.load.image('orange', 'orange.png');
+            this.load.svg('apple', 'apple.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('grape', 'grape.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('banana', 'banana.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('melon', 'melon.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('orange', 'orange.svg', { width: fruitSize, height: fruitSize });
             this.load.audio('pop', 'pecho.mp3');
             this.load.audio('appear', 'poincho.mp3');
         }
@@ -66,7 +81,6 @@
             this.input.on('pointerdown', handleTap, this);
 
             this.popSound = this.sound.add('pop');
-            // this.appearSound = this.sound.add('appear');
 
             // 最初の果物を生成
             generateFruits.call(this, currentFruit);
@@ -114,8 +128,8 @@
                     document.body.style.backgroundColor = '#ffbcbc';
                     break;
                 case 'grape':
-                    this.cameras.main.setBackgroundColor('#c8ffd8');
-                    document.body.style.backgroundColor = '#c8ffd8';
+                    this.cameras.main.setBackgroundColor('#9ee3b2');
+                    document.body.style.backgroundColor = '#9ee3b2';
                     break;
                 case 'banana':
                     this.cameras.main.setBackgroundColor('#fff4b3');
@@ -136,41 +150,21 @@
             }
 
             // 果物を生成するループ
-            const fruitSpeedX = 0.2;
-            const fruitSpeedY = 0.2;
 
             for (let i = 0; i < 5; i++) {
-                let x = Phaser.Math.Between(100, game.config.width - 100);
-                let y = Phaser.Math.Between(100, game.config.height - 100);
-
-                // 果物が画面端に生成されないようにする
-                if (x < 100) {
-                    x += 100;
-                } else if (x > game.config.width - 100) {
-                    x -= 100;
-                }
-                if (y < 100) {
-                    y += 100;
-                } else if (y > game.config.height - 100) {
-                    y -= 100;
-                }
+                let x = Phaser.Math.Between(fruitSize, game.config.width - fruitSize);
+                let y = Phaser.Math.Between(fruitSize, game.config.height - fruitSize);
 
                 const fruit = fruits.create(x, y, type).setInteractive();
 
-                // 果物のサイズを画面の面積の10分の1に設定
-                const screenArea = game.config.width * game.config.height;
-                const fruitArea = screenArea / 8;
-                const fruitWidth = Math.sqrt(fruitArea);
-                const fruitHeight = fruitWidth;
-                
-                fruit.setScale(fruitWidth / fruit.width, fruitHeight / fruit.height);
-                fruit.setScale(0);
+                // 果物のサイズを設定
+                fruit.setDisplaySize(fruitSize, fruitSize);
 
                 // 果物のアニメーションを設定
                 this.tweens.add({
                     targets: fruit,
-                    scaleX: fruitWidth / fruit.width,
-                    scaleY: fruitHeight / fruit.height,
+                    scaleX: 1,
+                    scaleY: 1,
                     duration: 500,
                     ease: 'Bounce.easeOut'
                 });
@@ -184,9 +178,6 @@
                     repeat: -1,
                     ease: 'Sine.easeInOut',
                 });
-
-                fruit.speedX = fruitSpeedX;
-                fruit.speedY = fruitSpeedY;
             }
 
             if(isFirst) {
@@ -199,7 +190,15 @@
 
         window.onresize = function() {
             game.scale.resize(window.innerWidth, window.innerHeight);
+            resizeFruits();
         };
+
+        function resizeFruits() {
+            const fruitSize = Math.min(game.config.width, game.config.height) / 5;
+            fruits.getChildren().forEach(fruit => {
+                fruit.setDisplaySize(fruitSize, fruitSize);
+            });
+        }
     </script>
 </body>
 </html>
