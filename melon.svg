@@ -1,0 +1,18 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M403 144V306" stroke="black" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M337 127C365.167 135 432 146.2 474 127" stroke="black" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="403" cy="427" r="233" fill="#8CDAC0" stroke="black" stroke-width="14"/>
+<path d="M206 402L413 244" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M217.5 512.5L512.5 280" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M275.5 591.5L572 359" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M383.5 621L590.5 463" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M599.445 446.128L435.739 243.611" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M556.73 543.277L325.164 247.543" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M481.675 606.298L248.652 310.209" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M365.115 628.517L201.408 426" stroke="#48BB95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="438.5" cy="377.5" r="31.5" fill="white" stroke="black" stroke-width="12"/>
+<circle cx="439.307" cy="377.5" r="8.91935" fill="black" stroke="black" stroke-width="12"/>
+<circle cx="367.5" cy="377.5" r="31.5" fill="white" stroke="black" stroke-width="12"/>
+<circle cx="367.5" cy="377.5" r="8.91935" fill="black" stroke="black" stroke-width="12"/>
+<path d="M472 441C472 448.017 466.199 455.962 453.189 462.511C440.526 468.884 422.614 473 402.5 473C382.386 473 364.474 468.884 351.811 462.511C338.801 455.962 333 448.017 333 441C333 433.983 338.801 426.038 351.811 419.489C364.474 413.116 382.386 409 402.5 409C422.614 409 440.526 413.116 453.189 419.489C466.199 426.038 472 433.983 472 441Z" fill="#FFF97D" stroke="black" stroke-width="12"/>
+</svg>

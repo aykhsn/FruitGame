@@ -1,0 +1,27 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="400" cy="437" r="233" fill="#F8AD77" stroke="black" stroke-width="14"/>
+<circle cx="316.5" cy="266.5" r="10.5" fill="#E78C4B"/>
+<circle cx="240.5" cy="337.5" r="10.5" fill="#E78C4B"/>
+<circle cx="374.5" cy="326.5" r="10.5" fill="#E78C4B"/>
+<circle cx="441.5" cy="256.5" r="10.5" fill="#E78C4B"/>
+<circle cx="291.5" cy="400.5" r="10.5" fill="#E78C4B"/>
+<circle cx="213.5" cy="458.5" r="10.5" fill="#E78C4B"/>
+<circle cx="270.5" cy="505.5" r="10.5" fill="#E78C4B"/>
+<circle cx="291.5" cy="590.5" r="10.5" fill="#E78C4B"/>
+<circle cx="353.5" cy="545.5" r="10.5" fill="#E78C4B"/>
+<circle cx="408.5" cy="618.5" r="10.5" fill="#E78C4B"/>
+<circle cx="462.5" cy="567.5" r="10.5" fill="#E78C4B"/>
+<circle cx="500.5" cy="495.5" r="10.5" fill="#E78C4B"/>
+<circle cx="580.5" cy="447.5" r="10.5" fill="#E78C4B"/>
+<circle cx="521.5" cy="404.5" r="10.5" fill="#E78C4B"/>
+<circle cx="578.5" cy="348.5" r="10.5" fill="#E78C4B"/>
+<circle cx="490.5" cy="315.5" r="10.5" fill="#E78C4B"/>
+<circle cx="557.5" cy="546.5" r="10.5" fill="#E78C4B"/>
+<path d="M406.299 238.109C415.059 221.443 428.666 175.089 413.008 123" stroke="black" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M577.038 194.418C538.936 146.027 461.725 138.436 425.803 192.811C423.239 196.693 422.88 201.667 425.758 205.323C437.029 219.636 468.789 240.807 500.5 239.084C532.481 237.346 568.54 217.104 578.092 204.285C580.334 201.276 579.359 197.366 577.038 194.418Z" fill="#88DAAB" stroke="black" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="435.5" cy="404.5" r="31.5" fill="white" stroke="black" stroke-width="12"/>
+<circle cx="436.307" cy="404.5" r="8.91935" fill="black" stroke="black" stroke-width="12"/>
+<circle cx="364.5" cy="404.5" r="31.5" fill="white" stroke="black" stroke-width="12"/>
+<circle cx="364.5" cy="404.5" r="8.91935" fill="black" stroke="black" stroke-width="12"/>
+<path d="M469 468C469 475.017 463.199 482.962 450.189 489.511C437.526 495.884 419.614 500 399.5 500C379.386 500 361.474 495.884 348.811 489.511C335.801 482.962 330 475.017 330 468C330 460.983 335.801 453.038 348.811 446.489C361.474 440.116 379.386 436 399.5 436C419.614 436 437.526 440.116 450.189 446.489C463.199 453.038 469 460.983 469 468Z" fill="#FFF97D" stroke="black" stroke-width="12"/>
+</svg>
