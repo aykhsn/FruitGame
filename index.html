@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぱくぱくフルーツ｜こどもゲーム</title>
-    <link rel="icon" href="apple.svg">
-    <link rel="apple-touch-icon" href="apple.svg">
-    <link rel="apple-touch-icon-precomposed" href="apple.svg">
-    <meta name="description" content="フルーツをタップしよう！子供向けゲーム">
+    <title>ぱくぱくフルーツ｜ゲームでぴこぽ</title>
+    <meta name="robots" content="noindex" />
+    <meta property="og:url" content="../../games/pakupakufruit">
+    <meta property="og:type" content="game">
+    <meta property="og:image" content="../../wp-content/uploads/2024/07/kv_pakupakufruit.png">
+    <meta property="og:title" content="ぱくぱくフルーツ">
+    <meta property="og:descripion" ctontent="赤ちゃん子ども向けの無料ミニゲームサイト"> 
+    <meta property="og:site_name" content="ゲームでぴこぽ" />
+    <link rel="icon" href="../../wp-content/uploads/2024/07/icon.png">
+    <link rel="apple-touch-icon" href="../../wp-content/uploads/2024/07/icon.png">
+    <link rel="apple-touch-icon-precomposed" href="../../wp-content/uploads/2024/07/icon.png">
+    <meta name="description" content="赤ちゃん子ども向けの無料ミニゲームサイト">
     <meta name="keywords" content="game, ゲーム, フルーツゲーム、知育、子供向けゲーム">
     <style>
         body {
@@ -67,13 +74,13 @@
         const fruitSize = Math.min(game.config.width, game.config.height) / 3; // 果物のサイズを画面の幅または高さの1/3に設定
 
         function preload() {
-            this.load.svg('apple', 'apple.svg', { width: fruitSize, height: fruitSize });
-            this.load.svg('grape', 'grape.svg', { width: fruitSize, height: fruitSize });
-            this.load.svg('banana', 'banana.svg', { width: fruitSize, height: fruitSize });
-            this.load.svg('melon', 'melon.svg', { width: fruitSize, height: fruitSize });
-            this.load.svg('orange', 'orange.svg', { width: fruitSize, height: fruitSize });
-            this.load.audio('pop', 'pecho.mp3');
-            this.load.audio('appear', 'poincho.mp3');
+            this.load.svg('apple', 'assets/apple.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('grape', 'assets/grape.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('banana', 'assets/banana.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('melon', 'assets/melon.svg', { width: fruitSize, height: fruitSize });
+            this.load.svg('orange', 'assets/orange.svg', { width: fruitSize, height: fruitSize });
+            this.load.audio('pop', 'assets/pecho.mp3');
+            this.load.audio('appear', 'assets/poincho.mp3');
         }
 
         function create() {
